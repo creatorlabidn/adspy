@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AdSpy — FB Ads Intelligence</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -254,7 +255,7 @@
   .scraper-run-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
 
   .scraper-advanced-row {
-    padding: 10px 20px;
+    padding: 12px 20px;
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -2529,7 +2530,16 @@
   .btn-col-adlib { background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 13px; font-weight: 600; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: none; display: inline-flex; align-items: center; transition: background 0.15s; flex-shrink: 0; }
   .btn-col-adlib:hover { background: #ffedd5; }
 
-  /* ─── UPLOAD JSON ─────────────────────────────────────────── */
+  /* ─── SCRAPER FORM BUILDER ───────────────────────────────── */
+  .scraper-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 16px 20px 14px;
+  }
+  @media (max-width: 800px) { .scraper-form-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 540px) { .scraper-form-grid { grid-template-columns: 1fr; } }
+
   .upload-dropzone {
     border: 2px dashed var(--border2);
     border-radius: 10px;
@@ -2584,7 +2594,6 @@
   .col-header-badge { position: absolute; top: -5px; right: -5px; background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 999px; display: none; align-items: center; justify-content: center; padding: 0 4px; }
 
 </style>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
 
@@ -2637,26 +2646,104 @@
       <div class="hero-label" style="margin:0">Facebook Ad Library</div>
     </div>
 
-    <div class="scraper-body">
-      <div class="scraper-field" style="grid-column: 1 / -1; max-width: none;">
-        <span class="scraper-label">Ads Library URL</span>
-        <input type="text" class="scraper-input" id="apifyUrl"
-          placeholder="https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=...">
+    <!-- FORM BUILDER -->
+    <div id="scraperFormPanel">
+      <div class="scraper-form-grid">
+
+        <!-- Negara -->
+        <div class="scraper-field">
+          <span class="scraper-label">Negara</span>
+          <select class="scraper-input" id="formCountry" onchange="buildAdLibraryUrl()">
+            <option value="ID" selected>🇮🇩 Indonesia</option>
+            <option value="US">🇺🇸 United States</option>
+            <option value="GB">🇬🇧 United Kingdom</option>
+            <option value="MY">🇲🇾 Malaysia</option>
+            <option value="SG">🇸🇬 Singapore</option>
+            <option value="PH">🇵🇭 Philippines</option>
+            <option value="TH">🇹🇭 Thailand</option>
+            <option value="VN">🇻🇳 Vietnam</option>
+            <option value="AU">🇦🇺 Australia</option>
+            <option value="IN">🇮🇳 India</option>
+            <option value="BR">🇧🇷 Brazil</option>
+            <option value="ALL">🌍 Semua Negara</option>
+          </select>
+        </div>
+
+        <!-- Keyword -->
+        <div class="scraper-field" style="grid-column: span 2">
+          <span class="scraper-label">Keyword / Nama Page</span>
+          <input type="text" class="scraper-input" id="formKeyword"
+            placeholder="Contoh: gratis ongkir, skincare, laptop gaming..."
+            oninput="buildAdLibraryUrl()">
+        </div>
+
+        <!-- Tipe Pencarian -->
+        <div class="scraper-field">
+          <span class="scraper-label">Tipe Pencarian</span>
+          <select class="scraper-input" id="formSearchType" onchange="buildAdLibraryUrl()">
+            <option value="keyword_unordered" selected>Keyword (bebas urutan)</option>
+            <option value="keyword_exact_phrase">Keyword (frasa tepat)</option>
+            <option value="page">Nama Page</option>
+          </select>
+        </div>
+
+        <!-- Status Iklan -->
+        <div class="scraper-field">
+          <span class="scraper-label">Status Iklan</span>
+          <select class="scraper-input" id="formStatus" onchange="buildAdLibraryUrl()">
+            <option value="active" selected>Aktif saja</option>
+            <option value="inactive">Tidak aktif</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+
+        <!-- Tipe Iklan -->
+        <div class="scraper-field">
+          <span class="scraper-label">Tipe Iklan</span>
+          <select class="scraper-input" id="formAdType" onchange="buildAdLibraryUrl()">
+            <option value="all" selected>Semua</option>
+            <option value="political_and_issue_ads">Politik & Isu</option>
+          </select>
+        </div>
+
+        <!-- Format Media -->
+        <div class="scraper-field">
+          <span class="scraper-label">Format Media</span>
+          <select class="scraper-input" id="formMediaType" onchange="buildAdLibraryUrl()">
+            <option value="all" selected>Semua format</option>
+            <option value="image">Image — foto/banner statis</option>
+            <option value="video">Video — iklan video</option>
+            <option value="meme">Meme — teks di atas gambar</option>
+            <option value="none">Tanpa media — teks saja</option>
+          </select>
+        </div>
+
+        <!-- Urutkan -->
+        <div class="scraper-field">
+          <span class="scraper-label">Urutkan</span>
+          <select class="scraper-input" id="formSort" onchange="buildAdLibraryUrl()">
+            <option value="total_impressions" selected>Total Impresi</option>
+            <option value="start_date">Tanggal Mulai</option>
+          </select>
+        </div>
+
+        <!-- Jumlah Ads -->
+        <div class="scraper-field">
+          <span class="scraper-label">Jumlah Ads</span>
+          <input type="number" class="scraper-input" id="apifyCount" value="100" min="1" max="1000" style="width:100%">
+        </div>
+
       </div>
+      <input type="hidden" id="apifyUrl">
     </div>
 
     <div class="scraper-advanced-row">
-      <span class="scraper-adv-label">Opsi</span>
-      <div class="scraper-adv-fields">
-        <div class="scraper-adv-field">
-          <label>Jumlah Ads</label>
-          <input type="number" class="scraper-adv-number" id="apifyCount" value="100" min="1" max="1000">
-        </div>
+      <div class="scraper-adv-fields" style="justify-content:flex-end">
+        <span id="tokenStatusChip" class="token-status-chip"></span>
         <button class="scraper-run-btn" id="runBtn" onclick="runApifyScraper()">
           <span id="runBtnIcon">&#9654;</span>
           <span id="runBtnText">Run Machine</span>
         </button>
-        <span id="tokenStatusChip" class="token-status-chip"></span>
       </div>
     </div>
 
@@ -3842,15 +3929,21 @@
 
   async function runApifyScraper() {
     const token = getToken();
-    const url   = document.getElementById('apifyUrl').value.trim();
     const count = parseInt(document.getElementById('apifyCount').value) || 100;
+
+    // Selalu generate URL dari form builder
+    const url = buildAdLibraryUrl();
 
     if (!token) {
       showToast('Token belum diset — buka Settings dulu!');
       openSettings();
       return;
     }
-    if (!url) { showToast('Masukkan Ads Library URL dulu!'); document.getElementById('apifyUrl').focus(); return; }
+    if (!url) {
+      showToast('Masukkan keyword dulu!');
+      document.getElementById('formKeyword').focus();
+      return;
+    }
 
     _scraperCancelled = false;
     _scraperRunId = null;
@@ -4923,6 +5016,39 @@
     t.style.color = success ? '#16a34a' : '#dc2626';
     clearTimeout(t._timer);
     t._timer = setTimeout(() => t.style.display = 'none', 3000);
+  }
+
+  // ─── SCRAPER FORM BUILDER ────────────────────────────────────
+  function buildAdLibraryUrl() {
+    const country    = document.getElementById('formCountry')?.value    || 'ID';
+    const keyword    = document.getElementById('formKeyword')?.value    || '';
+    const searchType = document.getElementById('formSearchType')?.value || 'keyword_unordered';
+    const status     = document.getElementById('formStatus')?.value     || 'active';
+    const adType     = document.getElementById('formAdType')?.value     || 'all';
+    const mediaType  = document.getElementById('formMediaType')?.value  || 'all';
+    const sort       = document.getElementById('formSort')?.value       || 'total_impressions';
+
+    const params = new URLSearchParams();
+    params.set('active_status',        status);
+    params.set('ad_type',              adType);
+    params.set('country',              country);
+    params.set('is_targeted_country',  'false');
+    params.set('media_type',           mediaType);
+    if (keyword.trim()) {
+      params.set('q',           keyword.trim());
+      params.set('search_type', searchType);
+    }
+    params.set('sort_data[direction]', 'desc');
+    params.set('sort_data[mode]',      sort);
+    params.set('source',               'fb-logo');
+
+    const url = 'https://www.facebook.com/ads/library/?' + params.toString();
+
+    // Update hidden apifyUrl supaya runApifyScraper() bisa baca
+    const apifyUrlEl = document.getElementById('apifyUrl');
+    if (apifyUrlEl) apifyUrlEl.value = url;
+
+    return url;
   }
 
   // ─── UPLOAD JSON MANUAL ───────────────────────────────────────
